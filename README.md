@@ -1,4 +1,4 @@
-# PA2
+# PA2 (Reader writer locks with priority inheritance)
 1. Introduction
 In PA2, you are going to implement readers/writer locks as described in this handout. Additionally, you will implement a priority inheritance mechanism to prevent the priority inversion problem when using locks.
 
