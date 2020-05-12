@@ -1,0 +1,63 @@
+Name:Devarsh Shah
+Unity ID:200310992
+
+1)The priority inversion problem could cause that a higher-priority process needs to wait for the completion of a lower-priority process.
+i)Priority inheritance is one approach to address this issue. Please give another approach and briefly describe its idea.
+
+Answer: 
+
+One of the other approach that can be used for solving priority inversion problem is by using the random boosting technique. This technique is predominantly used in solving deadlock problems caused because of priority inversion in Windows operatiing systems. The priorities of the processes which are holding the hold are boosted randomly so that they can finish their tasks quickly and thus leave the critical section as soon as possible. Once the quantum if completed and the process is still not exited, the process will get another chance to complete and exit when it gets scheduled again.
+
+[Reference: https://en.wikipedia.org/wiki/Random_boosting]
+
+
+
+2)Design a test case to show that your approach can address the priority inversion problem. You should compare the results that derived from the original XINU implementation (use semaphore) and that derived from your implementation (use readers/writer locks). Put your results in Lab2Answers.txt and your test case program (name it task1.c) in both ./sys and ./TMP
+
+Answer:
+
+--------------- Testing with Semaphores ----------------- 
+p1(priority = 10) is requesting to enter critical section
+p1(priority = 10) has entered critical section
+p2(priority = 20) has started
+----------------------Medium-------------------------------
+p2 has completed its execution
+----------------------Lowest-------------------------------
+p1 has completed critical section(priority = 10)
+p3(priority = 30) is requesting to enter critical section
+p3(priority = 30) has entered critical section
+----------------------Highest-------------------------------
+p3 has completed critical section
+
+--------------- Testing with Locks ---------------------- 
+p2(priority = 20) has started
+p1(priority = 10) is requesting to enter critical section
+p1(priority = 10) has entered critical section
+p3(priority = 30) is requesting to enter critical section
+Ramping up the priority of p3
+----------------------Medium-------------------------------
+p2 has completed its execution
+----------------------Lowest-------------------------------
+p1 has completed critical section(ramped up priority = 30)
+p3(priority = 30) has entered critical section
+----------------------Highest-------------------------------
+p3 has completed critical section
+p1 Original priority = 10
+
+p1, p2 and p3 processes with priorities 10,20,30 were created.p1 acquires a lock before p3. Hence, p3 has to wait for p1 to complete its critical section. Process p2 continues its execution normally.
+
+
+Lock Implementation:
+
+As p3 is waiting for p1, its priority has been ramped up to 30 till A completes its critical section and is then reset to 10 as seen in the output. Process p2 might finish its execution within a single timer interrupt which might make it appear that p2 has more priority than p1's new priority(30).
+
+Semaphore Implementation:
+
+Even though p3 is waiting for p1, p1 priority is the same(10). A is executed after B. After A is completed then only C will be executed. This makes C(higher priority process) to wait till B's completion.
+
+
+2)Synchronization is a quite complex issue in operating systems. To show your understanding about process synchronization, you are asked to point out a potential problem in this pseudo-code: task2_sync_issue.c. Multiple reader processes can execute this code concurrently by calling reader(). You are asked to describe an issue it may cause and why it can happen. Put your answer in Lab2Answers.txt mentioned above.
+
+Answer:
+
+The readers will keep on reading and the writer will not get any chance to read. Thus, it will lead to starvation of writers and not allowing them to access code. 
